@@ -147,16 +147,16 @@ ipcMain.on('toggle-content-protection', (event, enabled) => {
 ipcMain.handle('get-sources', async () => {
   try {
     const sources = await desktopCapturer.getSources({
-      types: ['screen', 'window'],
+      types: ['screen'],
       thumbnailSize: { width: 320, height: 180 },
-      fetchWindowIcons: true
+      fetchWindowIcons: false
     });
 
     return sources.map(source => ({
       id: source.id,
       name: source.name,
       thumbnail: source.thumbnail.toDataURL(),
-      appIcon: source.appIcon ? source.appIcon.toDataURL() : null,
+      appIcon: null,
       display_id: source.display_id
     }));
   } catch (err) {
