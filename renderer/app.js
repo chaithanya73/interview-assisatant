@@ -94,6 +94,9 @@ class StealthScreenShare {
       btnMinimize: document.getElementById('btnMinimize'),
       btnMaximize: document.getElementById('btnMaximize'),
       btnClose: document.getElementById('btnClose'),
+
+      // Server input
+      serverAddressInput: document.getElementById('serverAddressInput'),
     };
   }
 
@@ -187,7 +190,8 @@ class StealthScreenShare {
         return;
       }
 
-      const wsUrl = 'ws://localhost:8085';
+      const serverAddress = this.elements.serverAddressInput ? this.elements.serverAddressInput.value.trim() : 'localhost:8085';
+      const wsUrl = `ws://${serverAddress}`;
       this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {

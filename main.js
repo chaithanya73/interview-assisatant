@@ -47,19 +47,38 @@ function createWindow() {
   }
 }
 
-function startSignalingServer() {
-  try {
-    signalingServer = new SignalingServer(8085);
-    signalingServer.start();
-    console.log('[Main] Signaling server started');
-  } catch (err) {
-    console.error('[Main] Failed to start signaling server:', err.message);
-  }
+function startSignalingServer(port = 8085, retries = 5) {
+  return new Promise((resolve) => {
+    try {
+      signalingServer = new SignalingServer(port);
+      const wss = signalingServer.start();
+
+      // The WebSocket server emits 'error' asynchronously for port conflicts
+      wss.on('error', (err) => {
+        if (err.code === 'EADDRINUSE' && retries > 0) {
+          console.log(`[Main] Port ${port} in use, trying ${port + 1}...`);
+          signalingServer.stop();
+          startSignalingServer(port + 1, retries - 1).then(resolve);
+        } else {
+          console.error('[Main] Signaling server error:', err.message);
+          resolve(port); // Continue without server
+        }
+      });
+
+      wss.on('listening', () => {
+        console.log(`[Main] Signaling server started on port ${port}`);
+        resolve(port);
+      });
+    } catch (err) {
+      console.error('[Main] Failed to start signaling server:', err.message);
+      resolve(port);
+    }
+  });
 }
 
 // App lifecycle
-app.whenReady().then(() => {
-  startSignalingServer();
+app.whenReady().then(async () => {
+  await startSignalingServer();
   createWindow();
 
   app.on('activate', () => {
