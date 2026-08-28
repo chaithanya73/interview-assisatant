@@ -538,6 +538,15 @@ class StealthScreenShare {
     this.closeSourcePicker();
 
     try {
+      // FIX FOR CHROMIUM CRASH: 
+      // Chromium crashes if it tries to capture a screen while the app's own window has setContentProtection(true).
+      // We temporarily disable stealth mode while starting the capture.
+      if (window.electronAPI) {
+        window.electronAPI.toggleContentProtection(false);
+        // Wait a tiny bit for Windows to remove the WDA_EXCLUDEFROMCAPTURE flag
+        await new Promise(r => setTimeout(r, 150));
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: false,
         video: {
@@ -550,6 +559,10 @@ class StealthScreenShare {
 
       this.startSharingStream(stream);
     } catch (err) {
+      // If it failed, re-enable stealth mode
+      if (window.electronAPI) {
+        window.electronAPI.toggleContentProtection(true);
+      }
       console.error('[Share] Failed to capture source:', err);
       this.showToast(`Failed to start screen sharing: ${err.message}`, 'error');
     }
@@ -632,6 +645,11 @@ class StealthScreenShare {
     }
 
     this.isSharing = false;
+
+    // Re-enable stealth mode now that we are done sharing
+    if (window.electronAPI) {
+      window.electronAPI.toggleContentProtection(true);
+    }
 
     // Update UI
     this.elements.btnToolbarShare.style.display = 'flex';
