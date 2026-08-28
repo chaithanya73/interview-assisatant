@@ -2,6 +2,9 @@ const { app, BrowserWindow, ipcMain, desktopCapturer, screen, session } = requir
 const path = require('path');
 const SignalingServer = require('./server');
 
+// FIX FOR CHROMIUM CRASH: Disable hardware acceleration to prevent capture pipeline crash
+app.disableHardwareAcceleration();
+
 let mainWindow = null;
 let signalingServer = null;
 let selectedSourceForCapture = null;

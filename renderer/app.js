@@ -603,7 +603,15 @@ class StealthScreenShare {
     this.elements.btnStopShare.style.display = 'flex';
     this.elements.btnStopShare.classList.add('sharing');
     this.elements.btnShareScreen.textContent = 'Sharing...';
-    this.elements.btnShareScreen.disabled = true;
+
+    // FIX: Safely re-enable stealth mode a second after capture starts
+    if (window.electronAPI) {
+      setTimeout(() => {
+        if (this.isSharing) window.electronAPI.toggleContentProtection(true);
+      }, 1000);
+    }
+
+    this.showToast('Screen sharing started', 'success');
 
     // Notify peers and create connections
     this.sendSignaling({ type: 'screen-share-started' });
