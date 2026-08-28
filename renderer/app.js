@@ -97,6 +97,10 @@ class StealthScreenShare {
 
       // Server input
       serverAddressInput: document.getElementById('serverAddressInput'),
+
+      // Stealth Mode
+      btnStealthMode: document.getElementById('btnStealthMode'),
+      stealthModeText: document.getElementById('stealthModeText'),
     };
   }
 
@@ -133,6 +137,10 @@ class StealthScreenShare {
     this.elements.sourcePickerModal.addEventListener('click', (e) => {
       if (e.target === this.elements.sourcePickerModal) this.closeSourcePicker();
     });
+
+    // Stealth Mode
+    this.isStealthMode = false;
+    this.elements.btnStealthMode.addEventListener('click', () => this.toggleStealthMode());
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
@@ -177,6 +185,21 @@ class StealthScreenShare {
   goHome() {
     this.disconnect();
     this.showPanel('panelHome');
+  }
+
+  toggleStealthMode() {
+    this.isStealthMode = !this.isStealthMode;
+    if (window.electronAPI) {
+      window.electronAPI.toggleContentProtection(this.isStealthMode);
+    }
+    this.elements.stealthModeText.textContent = `Stealth: ${this.isStealthMode ? 'ON' : 'OFF'}`;
+    this.elements.btnStealthMode.style.color = this.isStealthMode ? '#00e5ff' : 'var(--text-light)';
+    
+    if (this.isStealthMode) {
+      this.showToast('Stealth Mode ON: App is now hidden from Zoom', 'success');
+    } else {
+      this.showToast('Stealth Mode OFF: App is visible', 'info');
+    }
   }
 
   // =========================================
@@ -543,15 +566,6 @@ class StealthScreenShare {
         window.electronAPI.setSelectedSource(this.selectedSourceId);
       }
 
-      // FIX FOR CHROMIUM CRASH: 
-      // Chromium crashes if it tries to capture a screen while the app's own window has setContentProtection(true).
-      // We temporarily disable stealth mode while starting the capture.
-      if (window.electronAPI) {
-        window.electronAPI.toggleContentProtection(false);
-        // Wait a tiny bit for Windows to remove the WDA_EXCLUDEFROMCAPTURE flag
-        await new Promise(r => setTimeout(r, 150));
-      }
-
       // Use modern getDisplayMedia API instead of legacy getUserMedia constraints
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
@@ -560,10 +574,6 @@ class StealthScreenShare {
 
       this.startSharingStream(stream);
     } catch (err) {
-      // If it failed, re-enable stealth mode
-      if (window.electronAPI) {
-        window.electronAPI.toggleContentProtection(true);
-      }
       console.error('[Share] Failed to capture source:', err);
       this.showToast(`Failed to start screen sharing: ${err.message}`, 'error');
     }
@@ -603,13 +613,6 @@ class StealthScreenShare {
     this.elements.btnStopShare.style.display = 'flex';
     this.elements.btnStopShare.classList.add('sharing');
     this.elements.btnShareScreen.textContent = 'Sharing...';
-
-    // FIX: Safely re-enable stealth mode a second after capture starts
-    if (window.electronAPI) {
-      setTimeout(() => {
-        if (this.isSharing) window.electronAPI.toggleContentProtection(true);
-      }, 1000);
-    }
 
     this.showToast('Screen sharing started', 'success');
 
@@ -654,11 +657,6 @@ class StealthScreenShare {
     }
 
     this.isSharing = false;
-
-    // Re-enable stealth mode now that we are done sharing
-    if (window.electronAPI) {
-      window.electronAPI.toggleContentProtection(true);
-    }
 
     // Update UI
     this.elements.btnToolbarShare.style.display = 'flex';

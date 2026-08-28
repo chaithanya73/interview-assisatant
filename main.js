@@ -13,8 +13,8 @@ function createWindow() {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
   mainWindow = new BrowserWindow({
-    width: Math.min(1200, width - 100),
-    height: Math.min(800, height - 100),
+    width: Math.floor(width * 0.8),
+    height: Math.floor(height * 0.8),
     minWidth: 800,
     minHeight: 600,
     frame: false,
@@ -32,7 +32,8 @@ function createWindow() {
   });
 
   // THE STEALTH MAGIC: Makes the window invisible to screen capture
-  mainWindow.setContentProtection(true);
+  // Disabled by default now; controlled via UI toggle button
+  // mainWindow.setContentProtection(true);
 
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 
