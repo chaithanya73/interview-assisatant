@@ -1,9 +1,10 @@
-const { app, BrowserWindow, ipcMain, desktopCapturer, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, desktopCapturer, screen, session } = require('electron');
 const path = require('path');
 const SignalingServer = require('./server');
 
 let mainWindow = null;
 let signalingServer = null;
+let selectedSourceForCapture = null;
 
 function createWindow() {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
@@ -78,6 +79,21 @@ function startSignalingServer(port = 8085, retries = 5) {
 
 // App lifecycle
 app.whenReady().then(async () => {
+  // Handle modern getDisplayMedia requests
+  session.defaultSession.setDisplayMediaRequestHandler((request, callback) => {
+    desktopCapturer.getSources({ types: ['screen'] }).then((sources) => {
+      const selected = sources.find(s => s.id === selectedSourceForCapture);
+      if (selected) {
+        callback({ video: selected });
+      } else {
+        callback({ video: sources[0] }); // Fallback to first screen
+      }
+      selectedSourceForCapture = null; // Reset
+    }).catch(err => {
+      console.error('[Main] getDisplayMedia error:', err);
+    });
+  });
+
   await startSignalingServer();
   createWindow();
 
@@ -163,6 +179,11 @@ ipcMain.handle('get-sources', async () => {
     console.error('[Main] Failed to get sources:', err);
     return [];
   }
+});
+
+// Set selected source for getDisplayMedia
+ipcMain.on('set-selected-source', (event, sourceId) => {
+  selectedSourceForCapture = sourceId;
 });
 
 // Window maximize state change listener

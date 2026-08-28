@@ -538,6 +538,11 @@ class StealthScreenShare {
     this.closeSourcePicker();
 
     try {
+      // Send selected source to main process for getDisplayMedia handler
+      if (window.electronAPI && window.electronAPI.setSelectedSource) {
+        window.electronAPI.setSelectedSource(this.selectedSourceId);
+      }
+
       // FIX FOR CHROMIUM CRASH: 
       // Chromium crashes if it tries to capture a screen while the app's own window has setContentProtection(true).
       // We temporarily disable stealth mode while starting the capture.
@@ -547,14 +552,10 @@ class StealthScreenShare {
         await new Promise(r => setTimeout(r, 150));
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: {
-          mandatory: {
-            chromeMediaSource: 'desktop',
-            chromeMediaSourceId: this.selectedSourceId
-          }
-        }
+      // Use modern getDisplayMedia API instead of legacy getUserMedia constraints
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: false
       });
 
       this.startSharingStream(stream);
