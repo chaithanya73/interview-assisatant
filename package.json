@@ -1,0 +1,40 @@
+{
+  "name": "stealth-screen-share",
+  "version": "1.0.0",
+  "description": "A stealth screen sharing app that hides itself during screen capture",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "server": "node server.js",
+    "dev": "electron . --dev",
+    "build": "electron-builder --win"
+  },
+  "keywords": ["screen-sharing", "webrtc", "electron", "stealth"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.stealth.screenshare",
+    "productName": "Stealth Screen Share",
+    "win": {
+      "target": "portable",
+      "icon": null
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "server.js",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    }
+  }
+}

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stealth Screen Share</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ===== CUSTOM TITLE BAR ===== -->
+  <div class="titlebar">
+    <div class="titlebar-left">
+      <div class="titlebar-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #6c5ce7;">
+          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+          <circle cx="12" cy="12" r="3"/>
+          <line x1="1" y1="1" x2="23" y2="23" stroke="#ff6b6b" stroke-width="2.5"/>
+        </svg>
+      </div>
+      <span class="titlebar-title">Stealth Share</span>
+    </div>
+
+    <div class="titlebar-center">
+      <div class="stealth-badge" id="stealthBadge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        STEALTH MODE ACTIVE
+      </div>
+    </div>
+
+    <div class="titlebar-controls">
+      <button class="titlebar-btn" id="btnMinimize" title="Minimize">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+      </button>
+      <button class="titlebar-btn" id="btnMaximize" title="Maximize">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="5" y="5" width="14" height="14" rx="1"/>
+        </svg>
+      </button>
+      <button class="titlebar-btn close" id="btnClose" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="6" y1="18" x2="18" y2="6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== MAIN APP CONTAINER ===== -->
+  <div class="app-container">
+
+    <!-- ===== HOME PANEL ===== -->
+    <div class="panel home-panel active" id="panelHome">
+      <div class="hero">
+        <div class="hero-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+            <path d="M7 8h4M7 11h2" opacity="0.5"/>
+          </svg>
+        </div>
+        <h1>Stealth Screen Share</h1>
+        <p>Share and view screens in real-time. This app is <strong>invisible to screen capture</strong> — it won't show up when you share your screen on Zoom, Teams, or any other tool.</p>
+      </div>
+
+      <div class="action-cards">
+        <div class="action-card" id="cardCreate" tabindex="0">
+          <div class="action-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </div>
+          <h3>Create Room</h3>
+          <p>Start a new session and share the code with others</p>
+        </div>
+
+        <div class="action-card" id="cardJoin" tabindex="0">
+          <div class="action-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+              <polyline points="10 17 15 12 10 7"/>
+              <line x1="15" y1="12" x2="3" y2="12"/>
+            </svg>
+          </div>
+          <h3>Join Room</h3>
+          <p>Enter a room code to connect to someone's session</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CREATE ROOM PANEL ===== -->
+    <div class="panel connect-panel" id="panelCreate">
+      <button class="back-btn" id="btnBackCreate">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+
+      <div class="connect-card">
+        <h2>Your Room</h2>
+        <p class="subtitle">Share this code with others to let them connect</p>
+
+        <div class="room-code-display">
+          <span class="room-code" id="roomCodeDisplay">------</span>
+          <button class="copy-btn" id="btnCopyCode" title="Copy to clipboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="status-indicator waiting" id="createStatus">
+          <span class="status-dot"></span>
+          <span id="createStatusText">Connecting to server...</span>
+        </div>
+
+        <p class="peer-count" id="createPeerCount"></p>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" id="btnShareScreen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <path d="M12 10v4M10 12h4"/>
+            </svg>
+            Share Screen
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== JOIN ROOM PANEL ===== -->
+    <div class="panel connect-panel" id="panelJoin">
+      <button class="back-btn" id="btnBackJoin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+
+      <div class="connect-card">
+        <h2>Join a Room</h2>
+        <p class="subtitle">Enter the 6-character room code to connect</p>
+
+        <div class="room-code-input-wrapper">
+          <input
+            type="text"
+            class="room-code-input"
+            id="roomCodeInput"
+            placeholder="ENTER CODE"
+            maxlength="6"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+
+        <div class="status-indicator waiting" id="joinStatus" style="display: none;">
+          <span class="status-dot"></span>
+          <span id="joinStatusText">Connecting...</span>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" id="btnJoinRoom">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+              <polyline points="10 17 15 12 10 7"/>
+              <line x1="15" y1="12" x2="3" y2="12"/>
+            </svg>
+            Join
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== VIEWER PANEL ===== -->
+    <div class="panel viewer-panel" id="panelViewer">
+      <div class="viewer-container" id="viewerContainer">
+        <div class="connection-overlay" id="connectionOverlay">
+          <span class="dot"></span>
+          <span id="connectionInfo">Connected</span>
+        </div>
+
+        <video class="remote-video" id="remoteVideo" autoplay playsinline></video>
+
+        <div class="viewer-placeholder" id="viewerPlaceholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+          <p>Waiting for screen share to begin...</p>
+          <div class="loading-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar" id="toolbar">
+        <div class="toolbar-section">
+          <div class="room-info">
+            <span class="label">Room</span>
+            <span id="toolbarRoomCode">------</span>
+          </div>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-section">
+          <button class="toolbar-btn" id="btnToolbarShare" title="Share your screen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <path d="M12 10v4M10 12h4"/>
+            </svg>
+            Share Screen
+          </button>
+
+          <button class="toolbar-btn" id="btnStopShare" title="Stop sharing" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="9" y1="8" x2="15" y2="14"/>
+              <line x1="15" y1="8" x2="9" y2="14"/>
+            </svg>
+            Stop Sharing
+          </button>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-section">
+          <button class="toolbar-btn" id="btnFullscreen" title="Toggle fullscreen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 3 21 3 21 9"/>
+              <polyline points="9 21 3 21 3 15"/>
+              <line x1="21" y1="3" x2="14" y2="10"/>
+              <line x1="3" y1="21" x2="10" y2="14"/>
+            </svg>
+          </button>
+
+          <button class="toolbar-btn" id="btnAlwaysOnTop" title="Toggle always on top">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 17V3"/>
+              <path d="m6 11 6 6 6-6"/>
+              <path d="M19 21H5"/>
+            </svg>
+            Pin
+          </button>
+
+          <button class="toolbar-btn btn-danger-toolbar" id="btnDisconnect" title="Disconnect" style="color: var(--danger);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Leave
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== SOURCE PICKER MODAL ===== -->
+  <div class="modal-overlay" id="sourcePickerModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Choose what to share</h3>
+        <button class="modal-close" id="btnCloseModal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="6" y1="18" x2="18" y2="6"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="source-grid" id="sourceGrid">
+          <!-- Sources populated dynamically -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnCancelSource">Cancel</button>
+        <button class="btn btn-primary" id="btnSelectSource" disabled>Share</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST CONTAINER ===== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
