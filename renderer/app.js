@@ -554,7 +554,7 @@ class StealthScreenShare {
       this.startSharingStream(stream);
     } catch (err) {
       console.error('[Share] Failed to capture source:', err);
-      this.showToast('Failed to start screen sharing', 'error');
+      this.showToast(`Failed to start screen sharing: ${err.message}`, 'error');
     }
   }
 
@@ -573,7 +573,7 @@ class StealthScreenShare {
     } catch (err) {
       if (err.name !== 'NotAllowedError') {
         console.error('[Share] Failed to start sharing:', err);
-        this.showToast('Failed to start screen sharing', 'error');
+        this.showToast(`Failed to start screen sharing: ${err.message}`, 'error');
       }
     }
   }
