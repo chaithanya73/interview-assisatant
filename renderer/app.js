@@ -305,6 +305,16 @@ class StealthScreenShare {
 
       case 'screen-share-started':
         this.showToast('Peer started sharing their screen', 'info');
+        this.sendSignaling({
+          type: 'request-stream',
+          targetPeerId: message.fromPeerId
+        });
+        break;
+
+      case 'request-stream':
+        if (this.isSharing && this.localStream) {
+          this.createPeerConnection(message.fromPeerId, true);
+        }
         break;
 
       case 'screen-share-stopped':

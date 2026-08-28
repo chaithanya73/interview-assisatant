@@ -81,6 +81,7 @@ class SignalingServer {
       case 'offer':
       case 'answer':
       case 'ice-candidate':
+      case 'request-stream':
         this.relayToPeer(ws, message);
         break;
 
