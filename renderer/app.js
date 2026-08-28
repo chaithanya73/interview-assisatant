@@ -543,10 +543,7 @@ class StealthScreenShare {
         video: {
           mandatory: {
             chromeMediaSource: 'desktop',
-            chromeMediaSourceId: this.selectedSourceId,
-            maxWidth: 1920,
-            maxHeight: 1080,
-            maxFrameRate: 30
+            chromeMediaSourceId: this.selectedSourceId
           }
         }
       });
