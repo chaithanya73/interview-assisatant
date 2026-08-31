@@ -20,6 +20,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Desktop capturer
   getSources: () => ipcRenderer.invoke('get-sources'),
   setSelectedSource: (sourceId) => ipcRenderer.send('set-selected-source', sourceId),
+  setOpacity: (opacity) => ipcRenderer.send('set-opacity', opacity),
 
   // Maximize state listener
   onMaximizeChanged: (callback) => {

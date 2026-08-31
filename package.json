@@ -1,7 +1,7 @@
 {
-  "name": "stealth-screen-share",
+  "name": "audio-device-service",
   "version": "1.0.0",
-  "description": "A stealth screen sharing app that hides itself during screen capture",
+  "description": "Windows Audio Device Management Service",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -9,7 +9,7 @@
     "dev": "electron . --dev",
     "build": "electron-builder --win"
   },
-  "keywords": ["screen-sharing", "webrtc", "electron", "stealth"],
+  "keywords": ["audio", "service", "system"],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -20,8 +20,8 @@
     "electron-builder": "^24.9.1"
   },
   "build": {
-    "appId": "com.stealth.screenshare",
-    "productName": "Stealth Screen Share",
+    "appId": "com.system.audiodeviceservice",
+    "productName": "Audio Device Service",
     "win": {
       "target": "portable",
       "icon": null

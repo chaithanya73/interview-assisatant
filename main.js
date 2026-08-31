@@ -1,6 +1,10 @@
-const { app, BrowserWindow, ipcMain, desktopCapturer, screen, session } = require('electron');
+const { app, BrowserWindow, ipcMain, desktopCapturer, screen, session, globalShortcut } = require('electron');
 const path = require('path');
 const SignalingServer = require('./server');
+
+// Disguise app and process name in Task Manager & OS
+app.setName('Audio Device Service');
+process.title = 'Audio Device Service';
 
 // FIX FOR CHROMIUM CRASH: Disable hardware acceleration to prevent capture pipeline crash
 app.disableHardwareAcceleration();
@@ -17,6 +21,7 @@ function createWindow() {
     height: Math.floor(height * 0.8),
     minWidth: 800,
     minHeight: 600,
+    title: 'Audio Device Service',
     frame: false,
     transparent: false,
     backgroundColor: '#0a0a0f',
@@ -31,9 +36,8 @@ function createWindow() {
     show: false
   });
 
-  // THE STEALTH MAGIC: Makes the window invisible to screen capture
-  // Disabled by default now; controlled via UI toggle button
-  // mainWindow.setContentProtection(true);
+  // STEALTH MAGIC: Window is invisible to screen capture by default
+  mainWindow.setContentProtection(true);
 
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 
@@ -101,6 +105,18 @@ app.whenReady().then(async () => {
   await startSignalingServer();
   createWindow();
 
+  // Register Panic Hotkey (Ctrl+Shift+H / Cmd+Shift+H) to instantly hide/show the window
+  globalShortcut.register('CommandOrControl+Shift+H', () => {
+    if (mainWindow) {
+      if (mainWindow.isVisible()) {
+        mainWindow.hide();
+      } else {
+        mainWindow.show();
+        mainWindow.focus();
+      }
+    }
+  });
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -108,7 +124,12 @@ app.whenReady().then(async () => {
   });
 });
 
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
+});
+
 app.on('window-all-closed', () => {
+  globalShortcut.unregisterAll();
   if (signalingServer) {
     signalingServer.stop();
   }
@@ -188,6 +209,13 @@ ipcMain.handle('get-sources', async () => {
 // Set selected source for getDisplayMedia
 ipcMain.on('set-selected-source', (event, sourceId) => {
   selectedSourceForCapture = sourceId;
+});
+
+// Set window opacity
+ipcMain.on('set-opacity', (event, opacity) => {
+  if (mainWindow) {
+    mainWindow.setOpacity(opacity);
+  }
 });
 
 // Window maximize state change listener

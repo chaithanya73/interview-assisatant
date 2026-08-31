@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stealth Screen Share</title>
+  <title>Audio Device Service</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -18,7 +18,7 @@
           <line x1="1" y1="1" x2="23" y2="23" stroke="#ff6b6b" stroke-width="2.5"/>
         </svg>
       </div>
-      <span class="titlebar-title">Stealth Share</span>
+      <span class="titlebar-title">Audio Device Service</span>
     </div>
 
     <div class="titlebar-center">
@@ -230,13 +230,20 @@
         <div class="toolbar-divider"></div>
 
         <div class="toolbar-section">
-          <button class="toolbar-btn" id="btnStealthMode" title="Toggle Stealth Mode (Hide from Zoom)">
+          <button class="toolbar-btn" id="btnStealthMode" title="Toggle Stealth Mode (Hide from Screen Capture)" style="color: #00e5ff;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
               <circle cx="12" cy="12" r="3"/>
             </svg>
-            <span id="stealthModeText">Stealth: OFF</span>
+            <span id="stealthModeText">Stealth: ON</span>
           </button>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-section opacity-section" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <label for="opacitySlider" class="label" style="font-size: 11px; margin-bottom: 4px;">Opacity</label>
+          <input type="range" id="opacitySlider" min="0.1" max="1" step="0.05" value="1" title="Adjust window transparency" style="width: 80px; cursor: pointer;">
         </div>
 
         <div class="toolbar-divider"></div>

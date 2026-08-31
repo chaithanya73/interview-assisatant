@@ -101,6 +101,9 @@ class StealthScreenShare {
       // Stealth Mode
       btnStealthMode: document.getElementById('btnStealthMode'),
       stealthModeText: document.getElementById('stealthModeText'),
+
+      // Opacity
+      opacitySlider: document.getElementById('opacitySlider'),
     };
   }
 
@@ -138,9 +141,17 @@ class StealthScreenShare {
       if (e.target === this.elements.sourcePickerModal) this.closeSourcePicker();
     });
 
-    // Stealth Mode
-    this.isStealthMode = false;
+    // Stealth Mode (ON by default)
+    this.isStealthMode = true;
     this.elements.btnStealthMode.addEventListener('click', () => this.toggleStealthMode());
+
+    // Opacity
+    this.elements.opacitySlider.addEventListener('input', (e) => {
+      const opacity = parseFloat(e.target.value);
+      if (window.electronAPI) {
+        window.electronAPI.setOpacity(opacity);
+      }
+    });
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
@@ -196,7 +207,7 @@ class StealthScreenShare {
     this.elements.btnStealthMode.style.color = this.isStealthMode ? '#00e5ff' : 'var(--text-light)';
     
     if (this.isStealthMode) {
-      this.showToast('Stealth Mode ON: App is now hidden from Zoom', 'success');
+      this.showToast('Stealth Mode ON: App is hidden from screen capture', 'success');
     } else {
       this.showToast('Stealth Mode OFF: App is visible', 'info');
     }
